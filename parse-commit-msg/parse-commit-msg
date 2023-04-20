@@ -2,38 +2,46 @@
 
 # Utils to make commit in short way
 
+DEFAULT_VERSION_CMD="git"
+ARC_VERSION_CMD="arc"
 VERSION_CMD="git"
-PATH_TO_GIT_DIR="git --git-dir=$PWD/.git"
 SEPARATOR=": "
 
 EXECUTION_CMD_SVC=""
 
-init() {
+get_error() {
+    echo "The variable $1 is not defined."
+}
+
+set_exection_cmd_svc() {
     if [ -z "$VERSION_CMD" ]; then
-        echo "The variable VERSION_CMD is not defined."
+        echo get_error "VERSION_CMD"
         exit 0
     fi
 
     if [ -z "$SEPARATOR" ]; then
-        echo "The variable SEPARATOR is not defined."
+        echo get_error "SEPARATOR"
         exit 0
     fi
 
     case $VERSION_CMD in
-        "arc")
-            EXECUTION_CMD_SVC+="arc"
+        $ARC_VERSION_CMD)
+            EXECUTION_CMD_SVC+=$ARC_VERSION_CMD
             ;;
         *)
-            EXECUTION_CMD_SVC+="git"
+            EXECUTION_CMD_SVC+=$DEFAULT_VERSION_CMD
             ;;
     esac
+}
 
+update_execution_cmd() {
     EXECUTION_CMD_BEFORE_HOOK="$EXECUTION_CMD_SVC add ."
     EXECUTION_CMD="$EXECUTION_CMD_SVC commit -m "
     EXECUTION_CMD_AFTER_HOOK="$EXECUTION_CMD_SVC status"
 }
 
-init
+set_exection_cmd_svc
+update_execution_cmd
 
 commit_msg_fn() {
     status_msg=( $($EXECUTION_CMD_SVC status | head -1) )
