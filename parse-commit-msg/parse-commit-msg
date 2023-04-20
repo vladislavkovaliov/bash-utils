@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Utils to make commit in short way
+
+VERSION_CMD="git"
+PATH_TO_GIT_DIR="git --git-dir=$PWD/.git"
+SEPARATOR=": "
+
+EXECUTION_CMD_SVC=""
+
+init() {
+    if [ -z "$VERSION_CMD" ]; then
+        echo "The variable VERSION_CMD is not defined."
+        exit 0
+    fi
+
+    if [ -z "$SEPARATOR" ]; then
+        echo "The variable SEPARATOR is not defined."
+        exit 0
+    fi
+
+    case $VERSION_CMD in
+        "arc")
+            EXECUTION_CMD_SVC+="arc"
+            ;;
+        *)
+            EXECUTION_CMD_SVC+="git"
+            ;;
+    esac
+
+    EXECUTION_CMD_BEFORE_HOOK="$EXECUTION_CMD_SVC add ."
+    EXECUTION_CMD="$EXECUTION_CMD_SVC commit -m "
+    EXECUTION_CMD_AFTER_HOOK="$EXECUTION_CMD_SVC status"
+}
+
+init
+
+commit_msg_fn() {
+    status_msg=( $($EXECUTION_CMD_SVC status | head -1) )
+    branch_name="${status_msg[@]: -1:1}"
+
+    commit_msg=""
+    commit_msg+=$branch_name
+    commit_msg+=$SEPARATOR
+    commit_msg+=$@
+
+    EXECUTION_CMD+=\"${commit_msg}\"
+   
+    eval "$EXECUTION_CMD_BEFORE_HOOK"
+    eval "$EXECUTION_CMD"
+    eval "$EXECUTION_CMD_AFTER_HOOK"
+}
+
+#alias commit="commit_msg_fn"
