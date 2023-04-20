@@ -35,9 +35,9 @@ set_exection_cmd_svc() {
 }
 
 update_execution_cmd() {
-    EXECUTION_CMD_BEFORE_HOOK="$EXECUTION_CMD_SVC add ."
-    EXECUTION_CMD="$EXECUTION_CMD_SVC commit -m "
-    EXECUTION_CMD_AFTER_HOOK="$EXECUTION_CMD_SVC status"
+    EXECUTION_CMD_BEFORE_HOOK="add ."
+    EXECUTION_CMD="commit -m "
+    EXECUTION_CMD_AFTER_HOOK="status"
 }
 
 set_exection_cmd_svc
@@ -54,9 +54,9 @@ commit_msg_fn() {
 
     EXECUTION_CMD+=\"${commit_msg}\"
    
-    eval "$EXECUTION_CMD_BEFORE_HOOK"
-    eval "$EXECUTION_CMD"
-    eval "$EXECUTION_CMD_AFTER_HOOK"
+    eval "$EXECUTION_CMD_SVC $EXECUTION_CMD_BEFORE_HOOK"
+    eval "$EXECUTION_CMD_SVC $EXECUTION_CMD"
+    eval "$EXECUTION_CMD_SVC $EXECUTION_CMD_AFTER_HOOK"
 }
 
 #alias commit="commit_msg_fn"
